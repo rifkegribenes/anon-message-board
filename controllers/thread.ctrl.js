@@ -53,47 +53,49 @@ exports.addThread = (req, res, next) => {
 
 // Deletes a thread from the DB
 exports.deleteThread = (req, res, next) => {
-  Thread.findOne({ _id: req.params.threadId })
+  Thread.findOne({ _id: req.body.threadId })
     .then((thread) => {
       if (!thread) {
         return res.status(404).json({message: 'Thread not found.'});
       } else {
-        // Only valid password can delete
-        if (req.params.delete_password === thread.delete_password) {
-          book.remove((err) => {
-            if (err) {
-              return handleError(res, err);
-            } else {
-              return res.status(204).json({message: `${book.title} was removed from your library.`});
-            }
-          });
-        } else {
-          return res.status(403).json({message: 'You do not have permission to delete this item.'});
+        // Valid password rquired to delete
+        if (req.body.delete_password === thread.delete_password) {
+          thread.remove()
+            .then(() => res.status(204).send('success'))
+            .catch(err => console.log(err));
+          } else {
+          res.status(403).send('incorrect password');
         }
       }
   })
   .catch((err) => {
-      console.log('book.ctrl.js > 114');
+      console.log('thread.ctrl.js > deleteThread');
       console.log(err);
       return handleError(res, err);
     });
 }
 
-// change ownership of a book. params = bookId, userId of new owner
-exports.updateBookOwner = (req, res, next) => {
-  const { bookId, userId } = req.params;
+// post reply. body = threadId, text
+exports.postReply = (req, res, next) => {
+  const { threadId, delete_password, text } = req.body;
+  
+  const reply = {
+    threadId,
+    delete_password,
+    text
+  }
 
-  const target = { _id: bookId };
-  const updates = { owner: userId };
+  const target = { _id: threadId };
+  const updates = { $push: { replies: reply } };
   const options = { new: true };
 
-  Book.findOneAndUpdate(target, updates, options)
+  Thread.findOneAndUpdate(target, updates, options)
   	.exec()
-    .then((book) => {
-    	return res.status(200).json({book});
+    .then((thread) => {
+    	return res.status(200).json({thread});
       })
     .catch((err) => {
-      console.log(`book.ctrl.js > updateBookOwner: ${err}`);
+      console.log(`thread.ctrl.js > postReply: ${err}`);
       return handleError(res, err);
     });
 }
