@@ -8,7 +8,8 @@
 
 var chai = require('chai');
 var assert = chai.assert;
+var mocha = require('mocha');
 
-suite('Unit Tests', function(){
+mocha.suite('Unit Tests', function(){
 
 });

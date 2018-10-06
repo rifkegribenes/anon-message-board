@@ -8,7 +8,7 @@
 
 var chaiHttp = require('chai-http');
 var chai = require('chai');
-var assert = chai.assert;
+var expect = chai.expect;
 const mocha = require('mocha');
 const { suite, test } = mocha;
 var server = require('../server');
@@ -35,14 +35,22 @@ suite('Functional Tests', function() {
         .post('/api/threads/rifkegribenes')
         .send({text:randomText(), delete_password:'pwd'})
         .end(function(err, res){
-          assert.equal(res.status, 200);
-          assert.equal(res.redirect, '/b/rifkegribenes');
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res).to.redirect;
+          expect(res).to.redirect;
+          expect(res).to.redirectTo('/b/rifkegribenes');
+          done();
         });
         chai.request(server)
         .post('/api/threads/rifkegribenes')
         .send({text:randomText(), delete_password:'pwd'})
         .end(function(err, res){
-          assert.equal(res.status, 200);
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res).to.redirect;
+          expect(res).to.redirect;
+          expect(res).to.redirectTo('/b/rifkegribenes');
           done();
         });
       });

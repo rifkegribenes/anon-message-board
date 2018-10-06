@@ -29,7 +29,7 @@ exports.addThread = (req, res, next) => {
 	    .then((thread) => {
 	      console.log('new thread saved');
 	      console.log(thread);
-	      res.redirect('/b/{board}');
+	      res.redirect(`/b/${board}`);
 	    })
 	    .catch((err) => {
 	      console.log(`thread.ctrl.js > addThread: ${err}`);
