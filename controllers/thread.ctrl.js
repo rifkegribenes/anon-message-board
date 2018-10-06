@@ -34,7 +34,7 @@ exports.getTenRecentThreads = (req, res, next) => {
 
 // Get a single thread by id. params = threadId
 exports.getThreadById = (req, res, next) => {
-  Thread.find({ _id: req.params.threadId })
+  Thread.find({ _id: req.body.threadId })
     .then((thread) => {
       const formattedThread = {
         text: thread.text,
