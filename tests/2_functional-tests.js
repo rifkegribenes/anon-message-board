@@ -30,7 +30,7 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/threads/:board', function() {
     
     suite('POST', function() {
-      test('create 2 new threads(because we end up deleting 1 in the delete test)', function(done) {
+      test('create 2 new threads', function(done) {
         chai.request(server)
         .post('/api/threads/rifkegribenes')
         .send({text:randomText(), delete_password:'pwd'})
@@ -38,8 +38,6 @@ suite('Functional Tests', function() {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res).to.redirect;
-          expect(res).to.redirect;
-          expect(res).to.redirectTo('/b/rifkegribenes');
           done();
         });
         chai.request(server)

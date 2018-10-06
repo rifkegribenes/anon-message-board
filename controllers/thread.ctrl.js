@@ -23,11 +23,10 @@ exports.addThread = (req, res, next) => {
   		bumped_on: new Date(),
   		replies: []
     });
-    console.log(newThread);
 
     newThread.save()
 	    .then((thread) => {
-	      res.redirect(`${req.protocol}://${req.get('host')}${req.originalUrl}/b/${board}`);
+	      res.redirect(`/b/${board}`);
 	    })
 	    .catch((err) => {
 	      console.log(`thread.ctrl.js > addThread: ${err}`);
