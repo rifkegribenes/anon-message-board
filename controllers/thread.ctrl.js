@@ -9,20 +9,20 @@ exports.getTenRecentThreads = (req, res, next) => {
     .exec()
     .then((threads) => {
       const formattedThreads = threads.map((thread) => {
-        const threeRecentReplies = thread.replies.sort((a,)
-        
-        array.sort(function(a, b) {
-    a = new Date(a.dateModified);
-    b = new Date(b.dateModified);
-    return a>b ? -1 : a<b ? 1 : 0;
-});
+        const recentReplies = thread.replies.sort((a, b) => {
+          a = new Date(a.created_on);
+          b = new Date(b.created_on);
+          return a > b ? -1 : a < b ? 1 : 0;
+        });
+        const threeRecentReplies = recentReplies.slice(0, 3);
         return {
           text: thread.text,
           created_on: thread.created_on,
           bumped_on: thread.bumped_on,
+          replies: threeRecentReplies
         }
       });
-      return res.status(200).json({threads});
+      return res.status(200).json({formattedThreads});
     })
     .catch((err) => {
       console.log(`thread.ctrl.js > getAllThreads: ${err}`);
@@ -34,7 +34,13 @@ exports.getTenRecentThreads = (req, res, next) => {
 exports.getThreadById = (req, res, next) => {
   Thread.find({ _id: req.params.threadId })
     .then((thread) => {
-      return res.status(200).json({thread});
+      const formattedThread = {
+        text: thread.text,
+        created_on: thread.created_on,
+        bumped_on: thread.bumped_on,
+        replies: thread.replies
+      };
+      return res.status(200).json({formattedThread});
       })
     .catch(err => {
       console.log(`thread.ctrl.js > getThreadById: ${err}`);
@@ -105,6 +111,26 @@ exports.addReply = (req, res, next) => {
 
   const target = { _id: thread_id };
   const updates = { $push: { replies: reply }, bumped_on: new Date() };
+  const options = { new: true };
+
+  Thread.findOneAndUpdate(target, updates, options)
+  	.exec()
+    .then((thread) => {
+    	res.redirect('/b/{board}/{thread_id}')
+      })
+    .catch((err) => {
+      console.log(`thread.ctrl.js > newReply: ${err}`);
+      return handleError(res, err);
+    });
+}
+
+
+// delete reply. body = thread_id, text, delete_password
+exports.deleteReply = (req, res, next) => {
+  const { thread_id, reply_id, delete_password } = req.body;
+
+  const target = { _id: thread_id };
+  const updates = { $pull: { replies: { _id: reply_id } }, bumped_on: new Date() };
   const options = { new: true };
 
   Thread.findOneAndUpdate(target, updates, options)
