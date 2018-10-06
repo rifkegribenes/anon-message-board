@@ -66,25 +66,7 @@ exports.getTenRecentThreads = (req, res, next) => {
     });
 };
 
-// Get a single thread by id. params = threadId
-exports.getThreadById = (req, res, next) => {
-  Thread.find({ _id: req.body.threadId })
-    .then((thread) => {
-      const formattedThread = {
-        text: thread.text,
-        created_on: thread.created_on,
-        bumped_on: thread.bumped_on,
-        replies: thread.replies
-      };
-      return res.status(200).json({formattedThread});
-      })
-    .catch(err => {
-      console.log(`thread.ctrl.js > getThreadById: ${err}`);
-      return handleError(res, err);
-    });
-};
-
-
+///********* DELETE *********///
 
 // Deletes a thread from the DB
 exports.deleteThread = (req, res, next) => {
@@ -109,6 +91,24 @@ exports.deleteThread = (req, res, next) => {
       return handleError(res, err);
     });
 }
+
+// Get a single thread by id. params = threadId
+exports.getThreadById = (req, res, next) => {
+  Thread.find({ _id: req.body.threadId })
+    .then((thread) => {
+      const formattedThread = {
+        text: thread.text,
+        created_on: thread.created_on,
+        bumped_on: thread.bumped_on,
+        replies: thread.replies
+      };
+      return res.status(200).json({formattedThread});
+      })
+    .catch(err => {
+      console.log(`thread.ctrl.js > getThreadById: ${err}`);
+      return handleError(res, err);
+    });
+};
 
 // report thread. body = thread_id
 exports.reportThread = (req, res, next) => {
