@@ -129,20 +129,33 @@ exports.addReply = (req, res, next) => {
 exports.deleteReply = (req, res, next) => {
   const { thread_id, reply_id, delete_password } = req.body;
 
-  const target = { _id: thread_id };
-  const updates = { $pull: { replies: { _id: reply_id } }, bumped_on: new Date() };
+  const target = { _id: thread_id, 'replies._id': reply_id, 'replies.delete_password': delete_password };
+  const updates = { $set: {'replies.$.text': 'deleted' } };
   const options = { new: true };
+  
+  Thread.findOne(target, updates, options)
+  .exec()
+  .then((thread) => {
+    if (!thread) {
+      res.send('incorrect password');
+    }
+    res.redirect('/b/{board}/{thread_id}')
+    })
+  .catch((err) => {
+    console.log(`thread.ctrl.js > newReply: ${err}`);
+    return handleError(res, err);
+  });
 
-  Thread.findOneAndUpdate(target, updates, options)
-  	.exec()
-    .then((thread) => {
-    	res.redirect('/b/{board}/{thread_id}')
-      })
-    .catch((err) => {
-      console.log(`thread.ctrl.js > newReply: ${err}`);
-      return handleError(res, err);
-    });
-}
+  // Thread.findOneAndUpdate(target, updates, options)
+  // 	.exec()
+  //   .then((thread) => {
+  //   	res.redirect('/b/{board}/{thread_id}')
+  //     })
+  //   .catch((err) => {
+  //     console.log(`thread.ctrl.js > newReply: ${err}`);
+  //     return handleError(res, err);
+  //   });
+// }
 
 const handleError = (res, err) => {
   return res.status(500).json({message: err});
