@@ -36,7 +36,7 @@ suite('Functional Tests', function() {
         .send({text:randomText(), delete_password:'pwd'})
         .end(function(err, res){
           assert.equal(res.status, 200);
-          expect(res).to.redirect;
+          assert.equal(res.redirect, '/b/rifkegribenes');
         });
         chai.request(server)
         .post('/api/threads/rifkegribenes')

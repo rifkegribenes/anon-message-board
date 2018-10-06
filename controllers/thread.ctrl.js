@@ -4,6 +4,10 @@ const ReplySchema = require('../models/reply');
 const Reply = mongoose.model('Reply', ReplySchema)
 
 
+const handleError = (res, err) => {
+  return res.status(500).json({message: err});
+}
+
 /// THREAD HANDLERS ///
 
 /// POST ///
@@ -201,10 +205,4 @@ exports.reportReply = (req, res, next) => {
     console.log(`thread.ctrl.js > reportReply: ${err}`);
     return handleError(res, err);
   });
-}
-
-
-
-const handleError = (res, err) => {
-  return res.status(500).json({message: err});
 }
