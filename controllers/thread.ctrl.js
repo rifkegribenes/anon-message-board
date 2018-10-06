@@ -30,20 +30,19 @@ exports.addThread = (req, res, next) => {
     const newThread = new Thread({
       text,
       delete_password,
-  		authors: [ ...book.authors ],
-  		owner: book.owner,
-  		published: book.published,
-  		thumbnail: book.thumbnail
+  		created_on: new Date(),
+  		bumped_on: new Date(),
+  		replies: []
     });
-    console.log(newBook);
+    console.log(newThread);
 
-    newBook.save()
-	    .then((book) => {
-	      console.log('new book saved');
-	      console.log(book);
+    newThread.save()
+	    .then((thread) => {
+	      console.log('new thread saved');
+	      console.log(thread);
 	      return res.status(200).json({
-	          message: 'Book saved successfully',
-	          book
+	          message: 'Thread saved successfully',
+	          thread
 	        });
 	    })
 	    .catch((err) => {
