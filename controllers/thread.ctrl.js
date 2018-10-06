@@ -1,16 +1,33 @@
 const Thread = require('../models/thread');
 const Reply = require('../models/reply');
 
-// Get all threads
-exports.getAllThreads = (req, res, next) => {
+// Get ten most recently bumped threads
+exports.getTenRecentThreads = (req, res, next) => {
   Thread.find()
-  	.then((threads) => {
-    	return res.status(200).json({threads});
-  	})
-  	.catch((err) => {
-  		console.log(`thread.ctrl.js > getAllThreads: ${err}`);
-  		return handleError(res, err);
-  	});
+    .sort({bumped_on: -1})
+    .limit(10)
+    .exec()
+    .then((threads) => {
+      const formattedThreads = threads.map((thread) => {
+        const threeRecentReplies = thread.replies.sort((a,)
+        
+        array.sort(function(a, b) {
+    a = new Date(a.dateModified);
+    b = new Date(b.dateModified);
+    return a>b ? -1 : a<b ? 1 : 0;
+});
+        return {
+          text: thread.text,
+          created_on: thread.created_on,
+          bumped_on: thread.bumped_on,
+        }
+      });
+      return res.status(200).json({threads});
+    })
+    .catch((err) => {
+      console.log(`thread.ctrl.js > getAllThreads: ${err}`);
+      return handleError(res, err);
+    });
 };
 
 // Get a single thread by id. params = threadId
@@ -27,6 +44,7 @@ exports.getThreadById = (req, res, next) => {
 
 exports.addThread = (req, res, next) => {
   const { text, delete_password } = req.body;
+  const { board } = req.params;
 
     const newThread = new Thread({
       text,
