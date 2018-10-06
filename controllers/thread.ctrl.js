@@ -46,20 +46,20 @@ exports.addThread = (req, res, next) => {
 	        });
 	    })
 	    .catch((err) => {
-	      console.log(`book.ctrl.js > addBook: ${err}`);
+	      console.log(`thread.ctrl.js > addThread: ${err}`);
       return handleError(res, err);
 	    });
 }
 
-// Deletes a book from the DB
-exports.removeBook = (req, res, next) => {
-  Book.findOne({ _id: req.params.bookId })
-    .then((book) => {
-      if (!book) {
-        return res.status(404).json({message: 'Book not found.'});
+// Deletes a thread from the DB
+exports.deleteThread = (req, res, next) => {
+  Thread.findOne({ _id: req.params.threadId })
+    .then((thread) => {
+      if (!thread) {
+        return res.status(404).json({message: 'Thread not found.'});
       } else {
-        // Only owner can delete
-        if (book.owner.toString() === req.user._id.toString()) {
+        // Only valid password can delete
+        if (req.params.delete_password === thread.delete_password) {
           book.remove((err) => {
             if (err) {
               return handleError(res, err);
