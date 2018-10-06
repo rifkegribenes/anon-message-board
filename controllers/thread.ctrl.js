@@ -1,5 +1,7 @@
+const mongoose = require('mongoose');
 const Thread = require('../models/thread');
-const Reply = require('../models/reply');
+const ReplySchema = require('../models/reply');
+const Reply = mongoose.model('Reply', ReplySchema)
 
 // Get ten most recently bumped threads
 exports.getTenRecentThreads = (req, res, next) => {
@@ -98,8 +100,8 @@ exports.deleteThread = (req, res, next) => {
 }
 
 // report thread. body = thread_id
-exports.reportReply = (req, res, next) => {
-  const { thread_id } = req.body;
+exports.reportThread = (req, res, next) => {
+  const { thread_id } = req.params;
 
   const target = { _id: thread_id };
   const updates = { $set: {'reported': true } };

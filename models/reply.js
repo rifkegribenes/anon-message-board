@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ReplySchema = new Schema({
+exports.ReplySchema = new Schema({
   text: { type: String, required: true },
   delete_password: { type: String, required: true },
   thread_id: { type: Schema.Types.ObjectId, required: true },
   created_on: Date,
   reported: Boolean
 });
-
-module.exports = mongoose.model('Reply', ReplySchema);
