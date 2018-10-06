@@ -97,6 +97,29 @@ exports.deleteThread = (req, res, next) => {
     });
 }
 
+// report thread. body = thread_id
+exports.reportReply = (req, res, next) => {
+  const { thread_id } = req.body;
+
+  const target = { _id: thread_id };
+  const updates = { $set: {'reported': true } };
+  const options = { new: true };
+  
+  Thread.findOne(target, updates, options)
+  .exec()
+  .then((thread) => {
+    if (!thread) {
+      res.status(400).send('thread not found');
+    } else {
+      res.status(200).send('success');
+    }
+  })
+  .catch((err) => {
+    console.log(`thread.ctrl.js > reportThread: ${err}`);
+    return handleError(res, err);
+  });
+}
+
 // post reply. body = thread_id, text, delete_password
 exports.addReply = (req, res, next) => {
   const { thread_id, delete_password, text } = req.body;
@@ -137,25 +160,41 @@ exports.deleteReply = (req, res, next) => {
   .exec()
   .then((thread) => {
     if (!thread) {
-      res.send('incorrect password');
+      res.status(401).send('incorrect password');
+    } else {
+      res.status(200).send('success');
     }
-    res.redirect('/b/{board}/{thread_id}')
-    })
+  })
   .catch((err) => {
-    console.log(`thread.ctrl.js > newReply: ${err}`);
+    console.log(`thread.ctrl.js > deleteReply: ${err}`);
     return handleError(res, err);
   });
+}
 
-  // Thread.findOneAndUpdate(target, updates, options)
-  // 	.exec()
-  //   .then((thread) => {
-  //   	res.redirect('/b/{board}/{thread_id}')
-  //     })
-  //   .catch((err) => {
-  //     console.log(`thread.ctrl.js > newReply: ${err}`);
-  //     return handleError(res, err);
-  //   });
-// }
+// report reply. body = thread_id, reply_id
+exports.reportReply = (req, res, next) => {
+  const { thread_id, reply_id } = req.body;
+
+  const target = { _id: thread_id, 'replies._id': reply_id };
+  const updates = { $set: {'replies.$.reported': true } };
+  const options = { new: true };
+  
+  Thread.findOne(target, updates, options)
+  .exec()
+  .then((thread) => {
+    if (!thread) {
+      res.status(400).send('reply not found');
+    } else {
+      res.status(200).send('success');
+    }
+  })
+  .catch((err) => {
+    console.log(`thread.ctrl.js > reportReply: ${err}`);
+    return handleError(res, err);
+  });
+}
+
+
 
 const handleError = (res, err) => {
   return res.status(500).json({message: err});
