@@ -8,7 +8,7 @@
 
 var chaiHttp = require('chai-http');
 var chai = require('chai');
-var expect = chai.expect;
+var assert = chai.assert;
 const mocha = require('mocha');
 const { suite, test } = mocha;
 var server = require('../server');
@@ -35,9 +35,8 @@ suite('Functional Tests', function() {
         .post('/api/threads/rifkegribenes')
         .send({text:randomText(), delete_password:'pwd'})
         .end(function(err, res){
-          expect(err).to.be.null;
-          expect(res).to.have.status(200);
-          expect(res).to.redirect;
+          assert.equal(res.status, 200);
+          assert.isNull(e
           done();
         });
         chai.request(server)
@@ -47,7 +46,6 @@ suite('Functional Tests', function() {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res).to.redirect;
-          expect(res).to.redirect;
           expect(res).to.redirectTo('/b/rifkegribenes');
           done();
         });
@@ -55,7 +53,17 @@ suite('Functional Tests', function() {
     });
     
     suite('GET', function() {
-      
+      test('get 10 most recent threads with 3 replies each', function(done) {
+        chai.request(server)
+          .get('/api/threads/rifkegribenes')
+          .send({text:randomText(), delete_password:'pwd'})
+          .end(function(err, res){
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.array;
+            done();
+          });
+        });
     });
     
     suite('DELETE', function() {
