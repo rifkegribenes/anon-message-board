@@ -13,6 +13,16 @@ const mocha = require('mocha');
 const { suite, test } = mocha;
 var server = require('../server');
 
+const randomText = () => {
+  let text = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
@@ -20,7 +30,21 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/threads/:board', function() {
     
     suite('POST', function() {
-      
+      test('create 2 new threads(because we end up deleting 1 in the delete test)', function(done) {
+        chai.request(server)
+        .post('/api/threads/rifkegribenes')
+        .send({text:randomText(), delete_password:'pwd'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+        });
+        chai.request(server)
+        .post('/api/threads/rifkegribenes')
+        .send({text:randomText(), delete_password:'pwd'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          done();
+        });
+      });
     });
     
     suite('GET', function() {

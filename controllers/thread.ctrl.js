@@ -3,6 +3,36 @@ const Thread = require('../models/thread');
 const ReplySchema = require('../models/reply');
 const Reply = mongoose.model('Reply', ReplySchema)
 
+
+/// THREAD HANDLERS ///
+
+/// POST ///
+
+exports.addThread = (req, res, next) => {
+  const { text, delete_password } = req.body;
+  const { board } = req.params;
+
+    const newThread = new Thread({
+      text,
+      delete_password,
+  		created_on: new Date(),
+  		bumped_on: new Date(),
+  		replies: []
+    });
+    console.log(newThread);
+
+    newThread.save()
+	    .then((thread) => {
+	      console.log('new thread saved');
+	      console.log(thread);
+	      res.redirect('/b/{board}');
+	    })
+	    .catch((err) => {
+	      console.log(`thread.ctrl.js > addThread: ${err}`);
+      return handleError(res, err);
+	    });
+}
+
 // Get ten most recently bumped threads
 exports.getTenRecentThreads = (req, res, next) => {
   Thread.find()
@@ -50,30 +80,7 @@ exports.getThreadById = (req, res, next) => {
     });
 };
 
-exports.addThread = (req, res, next) => {
-  const { text, delete_password } = req.body;
-  const { board } = req.params;
 
-    const newThread = new Thread({
-      text,
-      delete_password,
-  		created_on: new Date(),
-  		bumped_on: new Date(),
-  		replies: []
-    });
-    console.log(newThread);
-
-    newThread.save()
-	    .then((thread) => {
-	      console.log('new thread saved');
-	      console.log(thread);
-	      res.redirect('/b/{board}');
-	    })
-	    .catch((err) => {
-	      console.log(`thread.ctrl.js > addThread: ${err}`);
-      return handleError(res, err);
-	    });
-}
 
 // Deletes a thread from the DB
 exports.deleteThread = (req, res, next) => {
