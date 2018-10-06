@@ -1,4 +1,5 @@
 const Thread = require('../models/thread');
+const Reply = require('../models/reply');
 
 // Get all threads
 exports.getAllThreads = (req, res, next) => {
@@ -40,10 +41,7 @@ exports.addThread = (req, res, next) => {
 	    .then((thread) => {
 	      console.log('new thread saved');
 	      console.log(thread);
-	      return res.status(200).json({
-	          message: 'Thread saved successfully',
-	          thread
-	        });
+	      res.redirect('/b/{board}');
 	    })
 	    .catch((err) => {
 	      console.log(`thread.ctrl.js > addThread: ${err}`);
@@ -75,27 +73,29 @@ exports.deleteThread = (req, res, next) => {
     });
 }
 
-// post reply. body = threadId, text
-exports.postReply = (req, res, next) => {
-  const { threadId, delete_password, text } = req.body;
+// post reply. body = thread_id, text, delete_password
+exports.addReply = (req, res, next) => {
+  const { thread_id, delete_password, text } = req.body;
   
-  const reply = {
-    threadId,
+  const reply = new Reply({
+    thread_id,
     delete_password,
-    text
-  }
+    text,
+    created_on: new Date(),
+    reported: false
+  });
 
-  const target = { _id: threadId };
-  const updates = { $push: { replies: reply } };
+  const target = { _id: thread_id };
+  const updates = { $push: { replies: reply }, bumped_on: new Date() };
   const options = { new: true };
 
   Thread.findOneAndUpdate(target, updates, options)
   	.exec()
     .then((thread) => {
-    	return res.status(200).json({thread});
+    	res.redirect('/b/{board}/{thread_id}')
       })
     .catch((err) => {
-      console.log(`thread.ctrl.js > postReply: ${err}`);
+      console.log(`thread.ctrl.js > newReply: ${err}`);
       return handleError(res, err);
     });
 }

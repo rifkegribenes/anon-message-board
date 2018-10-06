@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Reply = require('./reply');
 
-const ThreadSchema = new Schema({
+const ReplySchema = new Schema({
   text: { type: String, required: true },
   delete_password: { type: String, required: true },
+  thread_id: { type: Schema.Types.ObjectId, required: true },
   created_on: Date,
-  bumped_on: Date,
-  reported: Boolean,
-  replies: [Reply]
+  reported: Boolean
 });
 
-module.exports = mongoose.model('Thread', ThreadSchema);
+module.exports = mongoose.model('Reply', ReplySchema);
