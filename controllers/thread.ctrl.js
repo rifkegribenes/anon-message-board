@@ -8,9 +8,9 @@ const handleError = (res, err) => {
   return res.status(500).json({message: err});
 }
 
-/// THREAD HANDLERS ///
+///********* THREAD HANDLERS *********///
 
-/// POST ///
+///********* POST *********///
 
 exports.addThread = (req, res, next) => {
   const { text, delete_password } = req.body;
@@ -34,6 +34,8 @@ exports.addThread = (req, res, next) => {
 	    });
 }
 
+///********* GET *********///
+
 // Get ten most recently bumped threads
 exports.getTenRecentThreads = (req, res, next) => {
   Thread.find()
@@ -49,13 +51,14 @@ exports.getTenRecentThreads = (req, res, next) => {
         });
         const threeRecentReplies = recentReplies.slice(0, 3);
         return {
+          _id: thread._id,
           text: thread.text,
           created_on: thread.created_on,
           bumped_on: thread.bumped_on,
           replies: threeRecentReplies
         }
       });
-      return res.status(200).json({formattedThreads});
+      return res.status(200).json(formattedThreads);
     })
     .catch((err) => {
       console.log(`thread.ctrl.js > getAllThreads: ${err}`);

@@ -23,6 +23,9 @@ const randomText = () => {
   return text;
 }
 
+let _id1;
+let _id2;
+
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
@@ -36,17 +39,14 @@ suite('Functional Tests', function() {
         .send({text:randomText(), delete_password:'pwd'})
         .end(function(err, res){
           assert.equal(res.status, 200);
-          assert.isNull(e
-          done();
+          assert.isNull(err);
         });
         chai.request(server)
         .post('/api/threads/rifkegribenes')
         .send({text:randomText(), delete_password:'pwd'})
         .end(function(err, res){
-          expect(err).to.be.null;
-          expect(res).to.have.status(200);
-          expect(res).to.redirect;
-          expect(res).to.redirectTo('/b/rifkegribenes');
+          assert.equal(res.status, 200);
+          assert.isNull(err);
           done();
         });
       });
@@ -58,9 +58,21 @@ suite('Functional Tests', function() {
           .get('/api/threads/rifkegribenes')
           .send({text:randomText(), delete_password:'pwd'})
           .end(function(err, res){
-            expect(err).to.be.null;
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.array;
+            assert.equal(res.status, 200);
+            assert.isNull(err);
+            assert.isArray(res.body);
+            assert.isBelow(res.body.length, 11);
+            assert.property(res.body[0], '_id');
+            assert.property(res.body[0], 'created_on');
+            assert.property(res.body[0], 'bumped_on');
+            assert.property(res.body[0], 'text');
+            assert.property(res.body[0], 'replies');
+            assert.notProperty(res.body[0], 'reported');
+            assert.notProperty(res.body[0], 'delete_password');
+            assert.isArray(res.body[0].replies);
+            assert.isBelow(res.body[0].replies.length, 4);
+            _id1 = res.body[0]._id;
+            _id2 = res.body[1]._id;
             done();
           });
         });
