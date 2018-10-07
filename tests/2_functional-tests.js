@@ -79,7 +79,7 @@ suite('Functional Tests', function() {
     });
     
     suite('DELETE', function() {
-      
+      test('get 10 most recent threads with 3 replies each', function(done) {
     });
     
     suite('PUT', function() {
