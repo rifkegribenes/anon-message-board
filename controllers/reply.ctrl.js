@@ -84,10 +84,10 @@ exports.deleteReply = (req, res, next) => {
   const { thread_id, reply_id, delete_password } = req.body;
 
   const target = { _id: thread_id, 'replies._id': reply_id, 'replies.delete_password': delete_password };
-  const updates = { $set: {'replies.$.text': 'deleted' } };
+  const updates = { $set: {'replies.$.text': '[deleted]' } };
   const options = { new: true };
   
-  Thread.findOne(target, updates, options)
+  Thread.findOneAndUpdate(target, updates, options)
   .exec()
   .then((thread) => {
     if (!thread) {

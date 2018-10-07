@@ -79,10 +79,20 @@ suite('Functional Tests', function() {
     });
     
     suite('DELETE', function() {
-      test('delete thread with correct password', function(done) {
+      test('delete reply with wrong password', function(done) {
         chai.request(server)
-          .delete('/api/threads/rifkegribenes')
-          .send({thread_id: _id1, delete_password:'pwd'})
+          .delete('/api/replies/rifkegribenes')
+          .send({thread_id: _id2, reply_id: _id3, delete_password:'wrongpassword'})
+          .end(function(err, res){
+            assert.equal(res.text, 'incorrect password');
+            assert.equal(res.status, 403);
+            done();
+          });
+      });
+      test('delete reply with correct password', function(done) {
+        chai.request(server)
+          .delete('/api/replies/rifkegribenes')
+          .send({thread_id: _id2, reply_id: _id3, delete_password:'pwd'})
           .end(function(err, res){
             assert.equal(res.text, 'success');
             assert.isNull(err);
@@ -90,16 +100,7 @@ suite('Functional Tests', function() {
           });
       });
       
-      test('delete thread with wrong password', function(done) {
-        chai.request(server)
-          .delete('/api/threads/rifkegribenes')
-          .send({thread_id: _id2, delete_password:'wrongpassword'})
-          .end(function(err, res){
-            assert.equal(res.text, 'incorrect password');
-            assert.equal(res.status, 403);
-            done();
-          });
-      });
+
     });
     
     suite('PUT', function() {
@@ -171,7 +172,27 @@ suite('Functional Tests', function() {
     });
     
     suite('DELETE', function() {
+      test('delete reply with correct password', function(done) {
+        chai.request(server)
+          .delete('/api/replies/rifkegribenes')
+          .send({thread_id: _id1, delete_password:'pwd'})
+          .end(function(err, res){
+            assert.equal(res.text, 'success');
+            assert.isNull(err);
+            done();
+          });
+      });
       
+      test('delete thread with wrong password', function(done) {
+        chai.request(server)
+          .delete('/api/threads/rifkegribenes')
+          .send({thread_id: _id2, delete_password:'wrongpassword'})
+          .end(function(err, res){
+            assert.equal(res.text, 'incorrect password');
+            assert.equal(res.status, 403);
+            done();
+          });
+      });
     });
     
   });
