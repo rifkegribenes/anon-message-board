@@ -98,7 +98,7 @@ suite('Functional Tests', function() {
           .send({thread_id: _id2, delete_password:'wrongpassword'})
           .end(function(err, res){
             assert.equal(res.text, 'incorrect password');
-            assert.equ(err);
+            assert.equal(res.status, 403);
             done();
           });
       });
