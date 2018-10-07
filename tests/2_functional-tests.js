@@ -72,8 +72,6 @@ suite('Functional Tests', function() {
             assert.isBelow(res.body[0].replies.length, 4);
             _id1 = res.body[0]._id;
             _id2 = res.body[1]._id;
-            console.log(`_id1: ${_id1}`);
-            console.log(`_id2: ${_id2}`);
             done();
           });
         });
@@ -149,7 +147,6 @@ suite('Functional Tests', function() {
           assert.notProperty(res.body, 'delete_password');
           assert.notProperty(res.body, 'reported');
           assert.isArray(res.body.replies);
-          console.log(res.body.replies);
           assert.notProperty(res.body.replies[0], 'delete_password');
           assert.notProperty(res.body.replies[0], 'reported');
           assert.equal(res.body.replies[res.body.replies.length-1].text, 'the reply text');
@@ -159,7 +156,16 @@ suite('Functional Tests', function() {
     });
     
     suite('PUT', function() {
-      
+      test('report reply', function(done) {
+        chai.request(server)
+          .put('/api/replies/rifkegribenes')
+          .send({reply_id: _id2})
+          .end(function(err, res){
+            assert.equal(res.text, 'success');
+            assert.isNull(err);
+            done();
+          });
+      });
     });
     
     suite('DELETE', function() {
