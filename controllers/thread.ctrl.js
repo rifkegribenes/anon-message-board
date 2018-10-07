@@ -70,15 +70,15 @@ exports.getTenRecentThreads = (req, res, next) => {
 
 // Deletes a thread from the DB
 exports.deleteThread = (req, res, next) => {
-  Thread.findOne({ _id: req.body.threadId })
+  Thread.findOne({ _id: req.body.thread_id })
     .then((thread) => {
       if (!thread) {
-        return res.status(404).json({message: 'Thread not found.'});
+        return res.status(404).send('thread not found.');
       } else {
         // Valid password rquired to delete
         if (req.body.delete_password === thread.delete_password) {
           thread.remove()
-            .then(() => res.status(204).send('success'))
+            .then(() => { console.log('81'); res.status(204).send('success'); })
             .catch(err => console.log(err));
           } else {
           res.status(403).send('incorrect password');
@@ -92,9 +92,9 @@ exports.deleteThread = (req, res, next) => {
     });
 }
 
-// Get a single thread by id. params = threadId
+// Get a single thread by id. params = thread_id
 exports.getThreadById = (req, res, next) => {
-  Thread.find({ _id: req.body.threadId })
+  Thread.find({ _id: req.body.thread_id })
     .then((thread) => {
       const formattedThread = {
         text: thread.text,

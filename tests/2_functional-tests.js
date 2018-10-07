@@ -73,13 +73,25 @@ suite('Functional Tests', function() {
             assert.isBelow(res.body[0].replies.length, 4);
             _id1 = res.body[0]._id;
             _id2 = res.body[1]._id;
+            console.log(`_id1: ${_id1}`);
+            console.log(`_id2: ${_id2}`);
             done();
           });
         });
     });
     
     suite('DELETE', function() {
-      test('get 10 most recent threads with 3 replies each', function(done) {
+      test('delete thread with correct password', function(done) {
+        chai.request(server)
+          .delete('/api/threads/rifkegribenes')
+          .send({thread_id: _id1, delete_password:'pwd'})
+          .end(function(err, res){
+            assert.equal(res.status, 204);
+            assert.equal(res.text, 'success');
+            assert.isNull(err);
+            done();
+          });
+      });
     });
     
     suite('PUT', function() {
