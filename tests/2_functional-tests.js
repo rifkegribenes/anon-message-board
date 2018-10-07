@@ -25,6 +25,7 @@ const randomText = () => {
 
 let _id1;
 let _id2;
+let _id3;
 
 chai.use(chaiHttp);
 
@@ -149,6 +150,7 @@ suite('Functional Tests', function() {
           assert.isArray(res.body.replies);
           assert.notProperty(res.body.replies[0], 'delete_password');
           assert.notProperty(res.body.replies[0], 'reported');
+          _id3 = res.body.replies[0]._id;
           assert.equal(res.body.replies[res.body.replies.length-1].text, 'the reply text');
           done();
          });
@@ -159,7 +161,7 @@ suite('Functional Tests', function() {
       test('report reply', function(done) {
         chai.request(server)
           .put('/api/replies/rifkegribenes')
-          .send({reply_id: _id2})
+          .send({thread_id: _id2, reply_id: _id3})
           .end(function(err, res){
             assert.equal(res.text, 'success');
             assert.isNull(err);

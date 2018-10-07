@@ -54,6 +54,7 @@ exports.getThreadById = (req, res, next) => {
       } else {
         const formattedReply = (reply) => {
           return {
+            _id: reply._id,
             thread_id: reply.thread_id,
             text: reply.text,
             created_on: reply.created_on,
@@ -112,7 +113,7 @@ exports.reportReply = (req, res, next) => {
   const updates = { $set: {'replies.$.reported': true } };
   const options = { new: true };
   
-  Thread.findOne(target, updates, options)
+  Thread.findOneAndUpdate(target, updates, options)
   .exec()
   .then((thread) => {
     if (!thread) {
