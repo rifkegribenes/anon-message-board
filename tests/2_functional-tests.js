@@ -149,6 +149,7 @@ suite('Functional Tests', function() {
           assert.notProperty(res.body, 'delete_password');
           assert.notProperty(res.body, 'reported');
           assert.isArray(res.body.replies);
+          console.log(res.body.replies);
           assert.notProperty(res.body.replies[0], 'delete_password');
           assert.notProperty(res.body.replies[0], 'reported');
           assert.equal(res.body.replies[res.body.replies.length-1].text, 'the reply text');

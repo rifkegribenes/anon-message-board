@@ -5,7 +5,8 @@ const Reply = mongoose.model('Reply', ReplySchema)
 
 
 const handleError = (res, err) => {
-  return res.status(500).json({message: err});
+  console.log(err);
+  return res.status(500).send(err);
 }
 
 ///********* REPLY HANDLERS *********///
@@ -26,9 +27,11 @@ exports.addReply = (req, res, next) => {
   
   Reply.save()
     .then((savedReply) => {
+      console.log('29');
+      console.log(savedReply);
     
       const target = { _id: thread_id };
-      const updates = { $push: { replies: savedReply }, bumped_on: new Date() };
+      const updates = { $push: { replies: savedReply }, $set: { bumped_on: new Date() } };
       const options = { new: true };
 
       Thread.findOneAndUpdate(target, updates, options)
@@ -54,8 +57,6 @@ exports.addReply = (req, res, next) => {
 exports.getThreadById = (req, res, next) => {
   Thread.findOne({ _id: req.query.thread_id })
     .then((thread) => {
-      console.log('50');
-      console.log(thread);
       if (!thread) { 
         res.status(404).send('thread not found'); 
       } else {
@@ -66,8 +67,6 @@ exports.getThreadById = (req, res, next) => {
           bumped_on: thread.bumped_on,
           replies: thread.replies
         };
-        console.log('55');
-        console.log(formattedThread);
         res.status(200).json(formattedThread);
       }
     })
