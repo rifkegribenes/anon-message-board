@@ -23,29 +23,39 @@ exports.addReply = (req, res, next) => {
     created_on: new Date(),
     reported: false
   });
+  
+  Reply.save()
+    .then((savedReply) => {
+    
+      const target = { _id: thread_id };
+      const updates = { $push: { replies: savedReply }, bumped_on: new Date() };
+      const options = { new: true };
 
-  const target = { _id: thread_id };
-  const updates = { $push: { replies: reply }, bumped_on: new Date() };
-  const options = { new: true };
-
-  Thread.findOneAndUpdate(target, updates, options)
-  	.exec()
-    .then((thread) => {
-    	res.redirect('/b/{board}/{thread_id}')
-      })
+      Thread.findOneAndUpdate(target, updates, options)
+        .exec()
+        .then((thread) => {
+          res.redirect('/b/{board}/{thread_id}')
+          })
+        .catch((err) => {
+          console.log(`reply.ctrl.js > POST Thread.findOneAndUpdate: ${err}`);
+          return handleError(res, err);
+        });
+    })
     .catch((err) => {
-      console.log(`thread.ctrl.js > newReply: ${err}`);
+      console.log(`reply.ctrl.js > POST Reply.save: ${err}`);
       return handleError(res, err);
     });
+
 }
 
 ///********* GET *********///
 
 // Get all replies in a thread. params = thread_id
 exports.getThreadById = (req, res, next) => {
-  console.lg
-  Thread.find({ _id: req.query.thread_id })
+  Thread.findOne({ _id: req.query.thread_id })
     .then((thread) => {
+      console.log('50');
+      console.log(thread);
       if (!thread) { 
         res.status(404).send('thread not found'); 
       } else {
