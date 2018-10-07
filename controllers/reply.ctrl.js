@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const Thread = require('../models/thread');
-const ReplySchema = require('../models/reply');
-const Reply = mongoose.model('Reply', ReplySchema);
+const models = require('../models');
+const { Thread, Reply } = models;
 
 console.log('6');
 console.log(Reply);

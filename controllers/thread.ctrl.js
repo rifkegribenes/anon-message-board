@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Thread = require('../models/thread');
+const models = require('../models');
+const { Thread, Reply } = models;
 
 
 const handleError = (res, err) => {
