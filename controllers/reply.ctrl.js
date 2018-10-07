@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const models = require('../models');
 const { Thread, Reply } = models;
 
-console.log('6');
-console.log(Reply);
 
 
 const handleError = (res, err) => {
@@ -19,8 +17,6 @@ const handleError = (res, err) => {
 exports.addReply = (req, res, next) => {
   const { thread_id, delete_password, text } = req.body;
   
-  console.log('20');
-  console.log(thread_id, delete_password, text);
   
   const reply = new Reply({
     thread_id: thread_id,
@@ -30,8 +26,6 @@ exports.addReply = (req, res, next) => {
     reported: false
   });
   
-  console.log('28');
-  console.log(reply);
     
   const target = { _id: thread_id };
   const updates = { $push: { replies: reply }, $set: { bumped_on: new Date() } };
@@ -40,8 +34,6 @@ exports.addReply = (req, res, next) => {
   Thread.findOneAndUpdate(target, updates, options)
     .exec()
     .then((thread) => {
-      console.log('35');
-      console.log(thread.replies);
       res.redirect('/b/{board}/{thread_id}')
       })
     .catch((err) => {
@@ -60,12 +52,20 @@ exports.getThreadById = (req, res, next) => {
       if (!thread) { 
         res.status(404).send('thread not found'); 
       } else {
+        const formattedReply = (reply) => {
+          return {
+            thread_id: reply.thread_id,
+            text: reply.text,
+            created_on: reply.created_on,
+          }
+        }
+        const repliesArray = thread.replies.map(reply => formattedReply(reply));
         const formattedThread = {
           _id: thread._id,
           text: thread.text,
           created_on: thread.created_on,
           bumped_on: thread.bumped_on,
-          replies: thread.replies
+          replies: repliesArray
         };
         res.status(200).json(formattedThread);
       }
