@@ -78,7 +78,7 @@ exports.deleteThread = (req, res, next) => {
         // Valid password rquired to delete
         if (req.body.delete_password === thread.delete_password) {
           thread.remove()
-            .then(() => { console.log('81'); res.status(204).send('success'); })
+            .then(() => res.send('success'))
             .catch(err => console.log(err));
           } else {
           res.status(403).send('incorrect password');

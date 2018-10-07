@@ -86,9 +86,19 @@ suite('Functional Tests', function() {
           .delete('/api/threads/rifkegribenes')
           .send({thread_id: _id1, delete_password:'pwd'})
           .end(function(err, res){
-            assert.equal(res.status, 204);
             assert.equal(res.text, 'success');
             assert.isNull(err);
+            done();
+          });
+      });
+      
+      test('delete thread with wrong password', function(done) {
+        chai.request(server)
+          .delete('/api/threads/rifkegribenes')
+          .send({thread_id: _id2, delete_password:'wrongpassword'})
+          .end(function(err, res){
+            assert.equal(res.text, 'incorrect password');
+            assert.equ(err);
             done();
           });
       });
