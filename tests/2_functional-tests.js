@@ -123,11 +123,27 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/replies/:board', function() {
     
     suite('POST', function() {
-      
+      test('create 2 new replies', function(done) {
+        chai.request(server)
+        .post('/api/replies/rifkegribenes')
+        .send({text:randomText(), delete_password:'pwd', thread_id: _id2})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.isNull(err);
+        });
+        chai.request(server)
+        .post('/api/replies/rifkegribenes')
+        .send({text:randomText(), delete_password:'pwd', thread_id: _id2})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.isNull(err);
+          done();
+        });
+      });
     });
     
     suite('GET', function() {
-      
+      test('get all replies for one thread', fu)
     });
     
     suite('PUT', function() {

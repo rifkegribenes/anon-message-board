@@ -11,6 +11,7 @@
 var expect = require('chai').expect;
 
 const threadController = require('../controllers/thread.ctrl');
+const replyController = require('../controllers/reply.ctrl');
 
 module.exports = function (app) {
   
@@ -21,8 +22,8 @@ module.exports = function (app) {
     .delete(threadController.deleteThread);
     
   app.route('/api/replies/:board')
-    .get(threadController.getThreadById)
-    .put(threadController.reportReply)
-    .post(threadController.addReply)
-    .delete(threadController.deleteReply);
+    .get(replyController.getThreadById)
+    .put(replyController.reportReply)
+    .post(replyController.addReply)
+    .delete(replyController.deleteReply);
 };
