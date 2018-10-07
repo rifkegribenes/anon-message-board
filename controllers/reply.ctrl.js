@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const Thread = require('../models/thread');
 const ReplySchema = require('../models/reply');
-const Reply = mongoose.model('Reply', ReplySchema)
+const Reply = mongoose.model('Reply', ReplySchema);
+
+console.log('6');
+console.log(Reply);
 
 
 const handleError = (res, err) => {
@@ -17,35 +20,33 @@ const handleError = (res, err) => {
 exports.addReply = (req, res, next) => {
   const { thread_id, delete_password, text } = req.body;
   
+  console.log('20');
+  console.log(thread_id, delete_password, text);
+  
   const reply = new Reply({
-    thread_id,
-    delete_password,
-    text,
+    thread_id: thread_id,
+    delete_password: delete_password,
+    text: text,
     created_on: new Date(),
     reported: false
   });
   
-  Reply.save()
-    .then((savedReply) => {
-      console.log('29');
-      console.log(savedReply);
+  console.log('28');
+  console.log(reply);
     
-      const target = { _id: thread_id };
-      const updates = { $push: { replies: savedReply }, $set: { bumped_on: new Date() } };
-      const options = { new: true };
+  const target = { _id: thread_id };
+  const updates = { $push: { replies: reply }, $set: { bumped_on: new Date() } };
+  const options = { new: true };
 
-      Thread.findOneAndUpdate(target, updates, options)
-        .exec()
-        .then((thread) => {
-          res.redirect('/b/{board}/{thread_id}')
-          })
-        .catch((err) => {
-          console.log(`reply.ctrl.js > POST Thread.findOneAndUpdate: ${err}`);
-          return handleError(res, err);
-        });
-    })
+  Thread.findOneAndUpdate(target, updates, options)
+    .exec()
+    .then((thread) => {
+      console.log('35');
+      console.log(thread.replies);
+      res.redirect('/b/{board}/{thread_id}')
+      })
     .catch((err) => {
-      console.log(`reply.ctrl.js > POST Reply.save: ${err}`);
+      console.log(`reply.ctrl.js > POST Thread.findOneAndUpdate: ${err}`);
       return handleError(res, err);
     });
 
