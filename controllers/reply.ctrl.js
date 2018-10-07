@@ -43,16 +43,24 @@ exports.addReply = (req, res, next) => {
 
 // Get all replies in a thread. params = thread_id
 exports.getThreadById = (req, res, next) => {
-  Thread.find({ _id: req.body.thread_id })
+  console.lg
+  Thread.find({ _id: req.query.thread_id })
     .then((thread) => {
-      const formattedThread = {
-        text: thread.text,
-        created_on: thread.created_on,
-        bumped_on: thread.bumped_on,
-        replies: thread.replies
-      };
-      return res.status(200).json({formattedThread});
-      })
+      if (!thread) { 
+        res.status(404).send('thread not found'); 
+      } else {
+        const formattedThread = {
+          _id: thread._id,
+          text: thread.text,
+          created_on: thread.created_on,
+          bumped_on: thread.bumped_on,
+          replies: thread.replies
+        };
+        console.log('55');
+        console.log(formattedThread);
+        res.status(200).json(formattedThread);
+      }
+    })
     .catch(err => {
       console.log(`thread.ctrl.js > getThreadById: ${err}`);
       return handleError(res, err);

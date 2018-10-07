@@ -36,14 +36,14 @@ suite('Functional Tests', function() {
       test('create 2 new threads', function(done) {
         chai.request(server)
         .post('/api/threads/rifkegribenes')
-        .send({text:randomText(), delete_password:'pwd'})
+        .send({text: randomText(), delete_password: 'pwd'})
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.isNull(err);
         });
         chai.request(server)
         .post('/api/threads/rifkegribenes')
-        .send({text:randomText(), delete_password:'pwd'})
+        .send({text: randomText(), delete_password: 'pwd'})
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.isNull(err);
@@ -56,7 +56,6 @@ suite('Functional Tests', function() {
       test('get 10 most recent threads with 3 replies each', function(done) {
         chai.request(server)
           .get('/api/threads/rifkegribenes')
-          .send({text:randomText(), delete_password:'pwd'})
           .end(function(err, res){
             assert.equal(res.status, 200);
             assert.isNull(err);
@@ -123,17 +122,10 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/replies/:board', function() {
     
     suite('POST', function() {
-      test('create 2 new replies', function(done) {
+      test('create new reply', function(done) {
         chai.request(server)
         .post('/api/replies/rifkegribenes')
-        .send({text:randomText(), delete_password:'pwd', thread_id: _id2})
-        .end(function(err, res){
-          assert.equal(res.status, 200);
-          assert.isNull(err);
-        });
-        chai.request(server)
-        .post('/api/replies/rifkegribenes')
-        .send({text:randomText(), delete_password:'pwd', thread_id: _id2})
+        .send({text: 'the reply text', delete_password: 'pwd', thread_id: _id2})
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.isNull(err);
@@ -143,7 +135,26 @@ suite('Functional Tests', function() {
     });
     
     suite('GET', function() {
-      test('get all replies for one thread', fu)
+      test('get all replies for one thread', function(done) {
+        chai.request(server)
+        .get('/api/replies/rifkegribenes')
+        .query({thread_id: _id2})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.property(res.body, '_id');
+          assert.property(res.body, 'created_on');
+          assert.property(res.body, 'bumped_on');
+          assert.property(res.body, 'text');
+          assert.property(res.body, 'replies');
+          assert.notProperty(res.body, 'delete_password');
+          assert.notProperty(res.body, 'reported');
+          assert.isArray(res.body.replies);
+          assert.notProperty(res.body.replies[0], 'delete_password');
+          assert.notProperty(res.body.replies[0], 'reported');
+          assert.equal(res.body.replies[res.body.replies.length-1].text, 'the reply text');
+          done();
+         });
+      });
     });
     
     suite('PUT', function() {
