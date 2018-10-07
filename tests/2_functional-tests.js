@@ -105,7 +105,16 @@ suite('Functional Tests', function() {
     });
     
     suite('PUT', function() {
-      
+      test('report thread', function(done) {
+        chai.request(server)
+          .put('/api/threads/rifkegribenes')
+          .send({thread_id: _id2})
+          .end(function(err, res){
+            assert.equal(res.text, 'success');
+            assert.isNull(err);
+            done();
+          });
+      });
     });
     
 

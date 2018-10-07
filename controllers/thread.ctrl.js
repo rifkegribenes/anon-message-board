@@ -92,6 +92,34 @@ exports.deleteThread = (req, res, next) => {
     });
 }
 
+
+///********* PUT *********///
+
+// report thread. body = thread_id
+exports.reportThread = (req, res, next) => {
+  const { thread_id } = req.body;
+
+  const target = { _id: thread_id };
+  const updates = { $set: {'reported': true } };
+  const options = { new: true };
+  
+  Thread.findOneAndUpdate(target, updates, options)
+  .exec()
+  .then((thread) => {
+    if (!thread) {
+      res.status(400).send('thread not found');
+    } else {
+      res.status(200).send('success');
+    }
+  })
+  .catch((err) => {
+    console.log(`thread.ctrl.js > reportThread: ${err}`);
+    return handleError(res, err);
+  });
+}
+
+
+
 // Get a single thread by id. params = thread_id
 exports.getThreadById = (req, res, next) => {
   Thread.find({ _id: req.body.thread_id })
@@ -110,28 +138,7 @@ exports.getThreadById = (req, res, next) => {
     });
 };
 
-// report thread. body = thread_id
-exports.reportThread = (req, res, next) => {
-  const { thread_id } = req.params;
 
-  const target = { _id: thread_id };
-  const updates = { $set: {'reported': true } };
-  const options = { new: true };
-  
-  Thread.findOne(target, updates, options)
-  .exec()
-  .then((thread) => {
-    if (!thread) {
-      res.status(400).send('thread not found');
-    } else {
-      res.status(200).send('success');
-    }
-  })
-  .catch((err) => {
-    console.log(`thread.ctrl.js > reportThread: ${err}`);
-    return handleError(res, err);
-  });
-}
 
 // post reply. body = thread_id, text, delete_password
 exports.addReply = (req, res, next) => {
